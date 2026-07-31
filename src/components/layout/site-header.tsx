@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, Search, X } from "lucide-react";
-import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 
 import { CONTATO } from "@/lib/constants/contato";
@@ -11,6 +12,14 @@ import { CONTATO } from "@/lib/constants/contato";
 export function SiteHeader() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [buscaAberta, setBuscaAberta] = useState(false);
+  const [rolou, setRolou] = useState(false);
+
+  useEffect(() => {
+    const atualizar = () => setRolou(window.scrollY > 14);
+    atualizar();
+    window.addEventListener("scroll", atualizar, { passive: true });
+    return () => window.removeEventListener("scroll", atualizar);
+  }, []);
 
   function fechar() {
     setMenuAberto(false);
@@ -23,9 +32,7 @@ export function SiteHeader() {
         <div className="page-container announcement-content">
           <span>Moda feminina com elegância e propósito</span>
           <div>
-            <a href={CONTATO.grupoVip} target="_blank" rel="noreferrer">
-              Grupo VIP
-            </a>
+            <a href={CONTATO.grupoVip} target="_blank" rel="noreferrer">Grupo VIP</a>
             <a href={CONTATO.instagram} target="_blank" rel="noreferrer">
               <FaInstagram aria-hidden="true" />
               {CONTATO.instagramUsuario}
@@ -34,13 +41,14 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <header className="site-header">
+      <header className={`site-header premium-site-header ${rolou ? "is-scrolled" : ""}`}>
         <div className="page-container header-content">
           <button
             type="button"
             className="header-icon-button mobile-only"
             onClick={() => setMenuAberto((valor) => !valor)}
             aria-label={menuAberto ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={menuAberto}
           >
             {menuAberto ? <X /> : <Menu />}
           </button>
@@ -66,11 +74,12 @@ export function SiteHeader() {
           <div className="header-actions">
             <button
               type="button"
-              className="header-icon-button"
+              className="header-icon-button premium-icon-button"
               onClick={() => setBuscaAberta((valor) => !valor)}
-              aria-label="Pesquisar produtos"
+              aria-label={buscaAberta ? "Fechar pesquisa" : "Pesquisar produtos"}
+              aria-expanded={buscaAberta}
             >
-              <Search />
+              {buscaAberta ? <X /> : <Search />}
             </button>
             <a
               href={`https://wa.me/${CONTATO.whatsappNumero}`}
@@ -84,32 +93,41 @@ export function SiteHeader() {
           </div>
         </div>
 
-        {buscaAberta ? (
-          <div className="search-drawer">
-            <form action="/buscar" className="page-container search-form">
-              <Search aria-hidden="true" />
-              <input
-                name="q"
-                type="search"
-                placeholder="O que você procura?"
-                autoFocus
-                required
-              />
-              <button type="submit">Buscar</button>
-            </form>
-          </div>
-        ) : null}
+        <AnimatePresence initial={false}>
+          {buscaAberta ? (
+            <motion.div
+              className="search-drawer premium-search-drawer"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.24 }}
+            >
+              <form action="/buscar" className="page-container search-form">
+                <Search aria-hidden="true" />
+                <input name="q" type="search" placeholder="O que você procura?" autoFocus required />
+                <button type="submit">Buscar</button>
+              </form>
+            </motion.div>
+          ) : null}
 
-        {menuAberto ? (
-          <nav className="mobile-nav" aria-label="Navegação mobile">
-            <Link href="/" onClick={fechar}>Início</Link>
-            <Link href="/#novidades" onClick={fechar}>Novidades</Link>
-            <Link href="/#colecoes" onClick={fechar}>Coleções</Link>
-            <Link href="/#produtos" onClick={fechar}>Produtos</Link>
-            <a href={CONTATO.instagram} target="_blank" rel="noreferrer">Instagram</a>
-            <a href={CONTATO.grupoVip} target="_blank" rel="noreferrer">Grupo VIP</a>
-          </nav>
-        ) : null}
+          {menuAberto ? (
+            <motion.nav
+              className="mobile-nav premium-mobile-nav"
+              aria-label="Navegação mobile"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Link href="/" onClick={fechar}>Início</Link>
+              <Link href="/#novidades" onClick={fechar}>Novidades</Link>
+              <Link href="/#colecoes" onClick={fechar}>Coleções</Link>
+              <Link href="/#produtos" onClick={fechar}>Produtos</Link>
+              <a href={CONTATO.instagram} target="_blank" rel="noreferrer">Instagram</a>
+              <a href={CONTATO.grupoVip} target="_blank" rel="noreferrer">Grupo VIP</a>
+            </motion.nav>
+          ) : null}
+        </AnimatePresence>
       </header>
     </>
   );

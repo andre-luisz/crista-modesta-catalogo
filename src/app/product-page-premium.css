@@ -1,0 +1,759 @@
+/* ============================================================
+   PÁGINA DO PRODUTO — VITRINE EDITORIAL
+   ============================================================ */
+
+.zara-product-breadcrumb-nav {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: .04em;
+}
+
+.zara-product-breadcrumb-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.zara-product-page-main {
+  width: min(1500px, 100%);
+  margin-inline: auto;
+}
+
+.zara-product-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(360px, .65fr);
+  align-items: start;
+  background: var(--bg);
+}
+
+.zara-product-gallery {
+  min-width: 0;
+  transition: opacity .25s ease, filter .25s ease;
+}
+
+.zara-product-gallery.is-changing {
+  opacity: .72;
+  filter: blur(1px);
+}
+
+.zara-desktop-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.zara-desktop-image {
+  position: relative;
+  min-height: 680px;
+  aspect-ratio: .72;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: #f1ece8;
+  cursor: zoom-in;
+}
+
+.zara-desktop-image:nth-child(3n + 1) {
+  grid-column: 1 / -1;
+  aspect-ratio: 1.32;
+}
+
+.zara-desktop-image-smart {
+  position: absolute !important;
+  inset: 0;
+}
+
+.zara-desktop-image-element {
+  object-fit: contain;
+  background: #f1ece8;
+  transition: transform .55s cubic-bezier(.2,.75,.25,1);
+}
+
+.zara-desktop-image:hover .zara-desktop-image-element {
+  transform: scale(1.015);
+}
+
+.zara-image-number {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  z-index: 2;
+  color: rgba(35, 29, 31, .62);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .15em;
+}
+
+.zara-image-expand {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255,255,255,.72);
+  background: rgba(255,255,255,.84);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity .22s ease, transform .22s ease;
+  backdrop-filter: blur(12px);
+}
+
+.zara-desktop-image:hover .zara-image-expand {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.zara-mobile-gallery {
+  display: none;
+}
+
+.zara-product-no-image {
+  min-height: 72vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  background: #f3eeeb;
+  color: var(--muted);
+}
+
+.zara-product-no-image svg {
+  color: var(--brand);
+}
+
+.zara-product-panel {
+  position: sticky;
+  top: 108px;
+  min-height: calc(100vh - 108px);
+  padding: 54px clamp(30px, 4vw, 70px) 48px;
+  background: rgba(255, 253, 251, .98);
+}
+
+.zara-product-panel-inner {
+  max-width: 470px;
+  margin-inline: auto;
+}
+
+.zara-product-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.zara-product-category {
+  margin: 0;
+  color: var(--brand);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.zara-favorite-button {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: color .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.zara-favorite-button:hover,
+.zara-favorite-button.active {
+  border-color: var(--brand);
+  background: var(--brand-soft, #fff2f7);
+  color: var(--brand);
+}
+
+.zara-product-panel h1 {
+  margin: 20px 0 0;
+  font-family: var(--serif);
+  font-size: clamp(48px, 4.5vw, 75px);
+  font-weight: 500;
+  line-height: .93;
+  letter-spacing: -.025em;
+}
+
+.zara-product-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 26px;
+}
+
+.zara-product-price small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.zara-product-price strong {
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.zara-product-code {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.zara-stock-message {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  padding: 16px 0;
+  border-block: 1px solid var(--line);
+}
+
+.zara-stock-message > svg {
+  flex: 0 0 auto;
+  color: #178146;
+}
+
+.zara-stock-message div {
+  display: grid;
+  gap: 3px;
+}
+
+.zara-stock-message strong {
+  font-size: 12px;
+}
+
+.zara-stock-message span {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.zara-option-group {
+  margin-top: 30px;
+}
+
+.zara-option-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.zara-option-heading span {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.zara-option-heading strong {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.zara-color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 17px;
+}
+
+.zara-color-options button {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.zara-color-options button:disabled {
+  cursor: wait;
+  opacity: .58;
+}
+
+.zara-color-options button > span {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #c9bfbb;
+  border-radius: 50%;
+  background: #f7f0ed;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  transition: outline .18s ease, transform .18s ease;
+}
+
+.zara-color-options button:hover > span {
+  transform: scale(1.04);
+}
+
+.zara-color-options button.active > span {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.zara-color-options small {
+  max-width: 68px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zara-size-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.zara-size-options button {
+  min-height: 49px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.zara-size-options button:hover {
+  border-color: var(--ink);
+}
+
+.zara-size-options button.active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: white;
+}
+
+.zara-size-help {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.zara-whatsapp-cta {
+  min-height: 66px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  margin-top: 34px;
+  background: #178146;
+  color: white;
+  transition: transform .18s ease, background .18s ease;
+}
+
+.zara-whatsapp-cta:hover {
+  transform: translateY(-1px);
+  background: #116c3a;
+}
+
+.zara-whatsapp-cta > svg {
+  flex: 0 0 auto;
+  font-size: 24px;
+}
+
+.zara-whatsapp-cta > span {
+  display: grid;
+  gap: 2px;
+}
+
+.zara-whatsapp-cta strong {
+  font-size: 13px;
+}
+
+.zara-whatsapp-cta small {
+  color: rgba(255,255,255,.72);
+  font-size: 9px;
+  letter-spacing: .04em;
+}
+
+.zara-share-button {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.zara-product-accordion {
+  border-bottom: 1px solid var(--line);
+}
+
+.zara-product-accordion:first-of-type {
+  margin-top: 34px;
+  border-top: 1px solid var(--line);
+}
+
+.zara-product-accordion summary {
+  min-height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.zara-product-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.zara-product-accordion summary::after {
+  content: "+";
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.zara-product-accordion[open] summary::after {
+  content: "−";
+}
+
+.zara-product-accordion > div {
+  padding: 0 0 22px;
+}
+
+.zara-product-accordion p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.85;
+  white-space: pre-line;
+}
+
+.zara-assurance-list {
+  display: grid;
+  gap: 15px;
+}
+
+.zara-assurance-list p {
+  display: flex;
+  gap: 11px;
+}
+
+.zara-assurance-list p > svg {
+  flex: 0 0 auto;
+  color: var(--brand);
+}
+
+.zara-assurance-list span {
+  display: grid;
+  gap: 3px;
+}
+
+.zara-assurance-list strong {
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.zara-product-purpose {
+  margin: 32px 0 0;
+  padding: 22px 0 0;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.zara-product-purpose cite {
+  display: block;
+  margin-top: 8px;
+  color: var(--brand);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.zara-mobile-action-bar {
+  display: none;
+}
+
+.zara-related-products {
+  padding-block: 125px;
+}
+
+.zara-related-products .editorial-section-heading p {
+  max-width: 540px;
+  margin: 14px auto 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+@media (max-width: 1100px) {
+  .zara-product-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .zara-product-panel {
+    position: static;
+    min-height: 0;
+  }
+
+  .zara-product-panel-inner {
+    max-width: 700px;
+  }
+
+  .zara-desktop-image {
+    min-height: 520px;
+  }
+}
+
+@media (max-width: 720px) {
+  .zara-product-breadcrumb-nav {
+    min-height: 52px;
+    width: calc(100% - 24px);
+  }
+
+  .zara-product-page-main {
+    width: 100%;
+  }
+
+  .zara-desktop-gallery {
+    display: none;
+  }
+
+  .zara-mobile-gallery {
+    position: relative;
+    display: block;
+  }
+
+  .zara-mobile-viewport {
+    overflow: hidden;
+    background: #f1ece8;
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .zara-mobile-container {
+    display: flex;
+  }
+
+  .zara-mobile-slide {
+    position: relative;
+    flex: 0 0 100%;
+    min-width: 0;
+    aspect-ratio: .76;
+    background: #f1ece8;
+  }
+
+  .zara-mobile-image-button {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: zoom-in;
+  }
+
+  .zara-mobile-image-smart {
+    position: absolute !important;
+    inset: 0;
+  }
+
+  .zara-mobile-image-element {
+    object-fit: contain;
+    background: #f1ece8;
+  }
+
+  .zara-gallery-arrow {
+    position: absolute;
+    top: 42%;
+    z-index: 3;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,.82);
+    color: var(--ink);
+    box-shadow: 0 8px 26px rgba(36,31,32,.09);
+    backdrop-filter: blur(10px);
+  }
+
+  .zara-gallery-arrow.previous {
+    left: 12px;
+  }
+
+  .zara-gallery-arrow.next {
+    right: 12px;
+  }
+
+  .zara-gallery-arrow:disabled {
+    opacity: .3;
+  }
+
+  .zara-mobile-counter {
+    position: absolute;
+    right: 14px;
+    bottom: 89px;
+    z-index: 3;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(32,27,28,.72);
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .08em;
+  }
+
+  .zara-mobile-thumbnails {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 64px;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 12px 2px;
+    scrollbar-width: none;
+  }
+
+  .zara-mobile-thumbnails::-webkit-scrollbar {
+    display: none;
+  }
+
+  .zara-mobile-thumbnails button {
+    position: relative;
+    aspect-ratio: .75;
+    overflow: hidden;
+    padding: 0;
+    border: 1px solid transparent;
+    background: #f1ece8;
+  }
+
+  .zara-mobile-thumbnails button.active {
+    border-color: var(--ink);
+  }
+
+  .zara-mobile-thumbnail-smart {
+    position: absolute !important;
+    inset: 0;
+  }
+
+  .zara-mobile-thumbnail-image {
+    object-fit: cover;
+  }
+
+  .zara-product-panel {
+    padding: 38px 18px calc(120px + env(safe-area-inset-bottom));
+  }
+
+  .zara-product-panel h1 {
+    font-size: 48px;
+  }
+
+  .zara-size-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .zara-whatsapp-cta {
+    display: none;
+  }
+
+  .zara-mobile-action-bar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 55;
+    min-height: calc(74px + env(safe-area-inset-bottom));
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(234,223,226,.92);
+    background: rgba(255,253,251,.96);
+    box-shadow: 0 -16px 38px rgba(35,27,30,.08);
+    backdrop-filter: blur(18px);
+  }
+
+  .zara-mobile-action-bar > div {
+    display: grid;
+  }
+
+  .zara-mobile-action-bar small {
+    color: var(--muted);
+    font-size: 9px;
+  }
+
+  .zara-mobile-action-bar strong {
+    font-size: 17px;
+  }
+
+  .zara-mobile-action-bar a {
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    background: #178146;
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .zara-mobile-action-bar a svg {
+    font-size: 19px;
+  }
+
+  .zara-related-products {
+    padding-block: 90px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zara-product-gallery,
+  .zara-desktop-image-element,
+  .zara-image-expand,
+  .zara-favorite-button,
+  .zara-color-options button > span,
+  .zara-whatsapp-cta {
+    transition: none !important;
+  }
+}
