@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { Expand, Share2 } from "lucide-react";
+import { Cross, Expand, Share2 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
@@ -81,7 +81,6 @@ export function ProductExperience({
 
   useEffect(() => {
     if (!emblaApi) return;
-
     emblaApi.reInit();
     emblaApi.scrollTo(0, true);
   }, [corId, imagens.length, emblaApi]);
@@ -118,7 +117,7 @@ export function ProductExperience({
   }
 
   return (
-    <div className="product-page-layout">
+    <div className="product-page-layout refined-product-layout">
       <section className="product-gallery-section">
         {imagens.length > 0 ? (
           <>
@@ -198,11 +197,15 @@ export function ProductExperience({
         )}
       </section>
 
-      <aside className="product-details-panel">
+      <aside className="product-details-panel refined-product-panel">
         <p className="product-breadcrumb">
           {produto.categoriaNome ?? "Coleção Cristã Modesta"}
         </p>
         <h1>{produto.nome}</h1>
+        <p className="product-faith-note">
+          <Cross size={13} aria-hidden="true" />
+          Beleza, modéstia e propósito em cada detalhe.
+        </p>
 
         <div className="product-detail-price">
           {produto.possuiPrecosDiferentes && !tamanhoSelecionado ? (
@@ -287,14 +290,18 @@ export function ProductExperience({
           </div>
         ) : null}
 
-        <div className="product-assurances">
+        <div className="product-assurances refined-assurances">
           <p>
             <strong>Disponibilidade real</strong>
             <span>Somente variações em estoque são exibidas.</span>
           </p>
           <p>
-            <strong>Atendimento personalizado</strong>
+            <strong>Atendimento com cuidado</strong>
             <span>Fale diretamente com a Cristã Modesta.</span>
+          </p>
+          <p>
+            <strong>Uma marca com propósito</strong>
+            <span>Servindo com fé, excelência e gratidão a Deus.</span>
           </p>
         </div>
       </aside>

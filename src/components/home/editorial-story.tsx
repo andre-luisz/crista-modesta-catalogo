@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Cross } from "lucide-react";
 
 import { SmartImage } from "@/components/shared/smart-image";
 import type { CatalogoProduto } from "@/types/catalogo";
@@ -11,7 +12,7 @@ export function EditorialStory({ produto }: EditorialStoryProps) {
   if (!produto?.imagemCapa) return null;
 
   return (
-    <section className="editorial-story">
+    <section className="editorial-story refined-editorial-story">
       <div className="editorial-story-image-wrap">
         <SmartImage
           src={produto.imagemCapa}
@@ -23,12 +24,15 @@ export function EditorialStory({ produto }: EditorialStoryProps) {
           imageClassName="editorial-story-image"
         />
       </div>
-      <div className="editorial-story-copy">
-        <span>Look da semana</span>
-        <h2>Delicadeza que se revela nos detalhes.</h2>
+      <div className="editorial-story-copy refined-story-copy">
+        <span className="story-faith-label">
+          <Cross size={13} aria-hidden="true" />
+          Beleza com essência
+        </span>
+        <h2>Feminilidade, modéstia e delicadeza em harmonia.</h2>
         <p>
-          Tecidos, caimentos e cores escolhidos para acompanhar diferentes
-          momentos sem abrir mão da sua essência.
+          Cada detalhe é escolhido para valorizar a mulher sem apagar aquilo
+          que ela carrega por dentro: fé, dignidade e propósito.
         </p>
         <Link href={`/produto/${produto.slug}`}>Conhecer este look</Link>
       </div>
