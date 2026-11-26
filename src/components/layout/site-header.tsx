@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -14,12 +15,27 @@ export function SiteHeader() {
   const [buscaAberta, setBuscaAberta] = useState(false);
   const [rolou, setRolou] = useState(false);
 
+  const pathname = usePathname();
+  const [secao, setSecao] = useState("inicio");
   useEffect(() => {
-    const atualizar = () => setRolou(window.scrollY > 14);
+    const atualizar = () => {
+      setRolou(window.scrollY > 14);
+      if (pathname !== "/") { setSecao("produtos"); return; }
+      const limite = (document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 100) + 48;
+      let atual = "inicio";
+      for (const id of ["novidades", "colecoes", "produtos"]) {
+        const elemento = document.getElementById(id);
+        if (elemento && elemento.getBoundingClientRect().top <= limite) atual = id;
+      }
+      setSecao(atual);
+    };
     atualizar();
     window.addEventListener("scroll", atualizar, { passive: true });
-    return () => window.removeEventListener("scroll", atualizar);
-  }, []);
+    window.addEventListener("resize", atualizar);
+    const observer = new ResizeObserver(atualizar);
+    observer.observe(document.body);
+    return () => { window.removeEventListener("scroll", atualizar); window.removeEventListener("resize", atualizar); observer.disconnect(); };
+  }, [pathname]);
 
   function fechar() {
     setMenuAberto(false);
@@ -65,10 +81,10 @@ export function SiteHeader() {
           </Link>
 
           <nav className="desktop-nav" aria-label="Navegação principal">
-            <Link href="/">Início</Link>
-            <Link href="/#novidades">Novidades</Link>
-            <Link href="/#colecoes">Coleções</Link>
-            <Link href="/#produtos">Produtos</Link>
+            <Link href="/" className={secao === "inicio" ? "catalog-nav-active" : undefined} aria-current={secao === "inicio" ? "location" : undefined}>Início</Link>
+            <Link href="/#novidades" className={secao === "novidades" ? "catalog-nav-active" : undefined} aria-current={secao === "novidades" ? "location" : undefined}>Novidades</Link>
+            <Link href="/#colecoes" className={secao === "colecoes" ? "catalog-nav-active" : undefined} aria-current={secao === "colecoes" ? "location" : undefined}>Coleções</Link>
+            <Link href="/buscar" className={secao === "produtos" ? "catalog-nav-active" : undefined} aria-current={secao === "produtos" ? "location" : undefined}>Produtos</Link>
           </nav>
 
           <div className="header-actions">
@@ -119,10 +135,10 @@ export function SiteHeader() {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
             >
-              <Link href="/" onClick={fechar}>Início</Link>
-              <Link href="/#novidades" onClick={fechar}>Novidades</Link>
-              <Link href="/#colecoes" onClick={fechar}>Coleções</Link>
-              <Link href="/#produtos" onClick={fechar}>Produtos</Link>
+              <Link href="/" onClick={fechar} className={secao === "inicio" ? "catalog-nav-active" : undefined} aria-current={secao === "inicio" ? "location" : undefined}>Início</Link>
+              <Link href="/#novidades" onClick={fechar} className={secao === "novidades" ? "catalog-nav-active" : undefined} aria-current={secao === "novidades" ? "location" : undefined}>Novidades</Link>
+              <Link href="/#colecoes" onClick={fechar} className={secao === "colecoes" ? "catalog-nav-active" : undefined} aria-current={secao === "colecoes" ? "location" : undefined}>Coleções</Link>
+              <Link href="/buscar" onClick={fechar} className={secao === "produtos" ? "catalog-nav-active" : undefined} aria-current={secao === "produtos" ? "location" : undefined}>Produtos</Link>
               <a href={CONTATO.instagram} target="_blank" rel="noreferrer">Instagram</a>
               <a href={CONTATO.grupoVip} target="_blank" rel="noreferrer">Grupo VIP</a>
             </motion.nav>

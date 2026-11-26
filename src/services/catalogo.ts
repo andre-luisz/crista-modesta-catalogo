@@ -41,6 +41,16 @@ function normalizarCorResumo(linha: Linha): CatalogoCorResumo {
   };
 }
 
+// Contrato público proposto: promoção efetiva calculada pelo ERP.
+function normalizarPromocao(valor: unknown) {
+  if (!valor || typeof valor !== "object") return null;
+  const linha = valor as Linha;
+  const precoOriginal = numero(linha.preco_original);
+  const precoPromocional = numero(linha.preco_promocional);
+  if (precoOriginal <= 0 || precoPromocional <= 0 || precoPromocional >= precoOriginal) return null;
+  return { campanhaNome: texto(linha.campanha_nome), precoOriginal, precoPromocional };
+}
+
 function normalizarProduto(linha: Linha): CatalogoProduto {
   const caminho =
     texto(linha.imagem_capa_caminho) ??
@@ -69,7 +79,11 @@ function normalizarProduto(linha: Linha): CatalogoProduto {
     possuiPrecosDiferentes:
       booleano(linha.possui_precos_diferentes) ||
       precoMinimo !== precoMaximo,
+    promocao: normalizarPromocao(linha.promocao),
     imagemCapa: getImagemPublicaUrl(caminho),
+    imagemOferta: getImagemPublicaUrl(texto(linha.imagem_oferta)),
+    corOferta: texto(linha.cor_oferta),
+    tamanhoOferta: texto(linha.tamanho_oferta),
     destaque:
       booleano(linha.destaque) ||
       booleano(linha.destaque_catalogo),
@@ -95,6 +109,7 @@ function normalizarTamanho(linha: Linha): CatalogoTamanho {
     variacaoId: texto(linha.variacao_id) ?? "",
     tamanho: texto(linha.tamanho) ?? "Único",
     preco: numero(linha.preco),
+    promocao: linha.disponivel === false ? null : normalizarPromocao(linha.promocao),
     disponivel: linha.disponivel !== false,
   };
 }
@@ -126,7 +141,7 @@ export async function listarProdutosPublicos(opcoes?: {
 }): Promise<CatalogoProduto[]> {
   const supabase = getPublicSupabaseClient();
   const { data, error } = await supabase.rpc(
-    "catalogo_listar_produtos",
+    "catalogo_listar_produtos_v2",
     {
       p_busca: opcoes?.busca?.trim() || null,
       p_categoria_id: opcoes?.categoriaId || null,
@@ -167,7 +182,7 @@ export async function obterProdutoPublico(
 ): Promise<CatalogoProdutoDetalhe | null> {
   const supabase = getPublicSupabaseClient();
   const { data, error } = await supabase.rpc(
-    "catalogo_obter_produto",
+    "catalogo_obter_produto_v2",
     { p_slug: slug },
   );
 
@@ -205,7 +220,7 @@ export async function listarProdutosRelacionados(
 ): Promise<CatalogoProduto[]> {
   const supabase = getPublicSupabaseClient();
   const { data, error } = await supabase.rpc(
-    "catalogo_produtos_relacionados",
+    "catalogo_produtos_relacionados_v2",
     { p_slug: slug, p_limite: 6 },
   );
 

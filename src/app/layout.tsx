@@ -9,6 +9,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import "./globals.css";
 import "./premium.css";
 import "./product-page-premium.css";
+import "./catalog-v2.css";
 
 const inter = Inter({ variable: "--font-sans", subsets: ["latin"] });
 const cormorant = Cormorant_Garamond({

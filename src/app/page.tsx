@@ -6,7 +6,7 @@ import { PremiumReveal } from "@/components/shared/premium-reveal";
 import { CONTATO } from "@/lib/constants/contato";
 import { listarCategoriasPublicas, listarProdutosPublicos } from "@/services/catalogo";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const [produtos, categorias] = await Promise.all([
@@ -14,6 +14,18 @@ export default async function Home() {
     listarCategoriasPublicas().catch(() => []),
   ]);
 
+  const produtosColecoes = (await Promise.all(
+    categorias.slice(0, 3).map(async (categoria) => {
+      const existente = produtos.find(
+        (produto) => produto.categoriaId === categoria.id && produto.imagemCapa,
+      );
+      if (existente) return [existente];
+      return listarProdutosPublicos({ categoriaId: categoria.id, limite: 36 })
+        .catch(() => []);
+    }),
+  )).flat();
+
+  const ofertas = produtos.filter((produto) => produto.promocao);
   const destaque =
     produtos.find((produto) => produto.destaque && produto.imagemCapa) ??
     produtos.find((produto) => produto.imagemCapa);
@@ -24,6 +36,15 @@ export default async function Home() {
   return (
     <>
       <EditorialHero produto={destaque} />
+      <nav className="page-container catalog-quick-nav" aria-label="Atalhos da vitrine">
+        <a href="/buscar">Toda a coleção</a>
+        {ofertas.length > 0 && <a href="#ofertas">Ofertas da vitrine</a>}
+        <a href="#colecoes">Categorias</a>
+      </nav>
+      {ofertas.length > 0 && <section id="ofertas" className="page-container catalog-offers-section">
+        <header className="editorial-section-heading"><div><span>Seleção especial</span><h2>Peças em oferta</h2></div></header>
+        <ProductGrid produtos={ofertas} />
+      </section>}
 
       <PremiumReveal>
         <section id="novidades" className="page-container intro-manifesto">
@@ -37,7 +58,7 @@ export default async function Home() {
       </PremiumReveal>
 
       <PremiumReveal>
-        <CategoryShowcase categorias={categorias} produtos={produtos} />
+        <CategoryShowcase categorias={categorias} produtos={produtosColecoes} />
       </PremiumReveal>
 
       <PremiumReveal>
@@ -55,7 +76,8 @@ export default async function Home() {
               Acompanhar no Instagram
             </a>
           </header>
-          <ProductGrid produtos={produtos} />
+          <ProductGrid produtos={produtos.slice(0, 12)} />
+          <div className="catalog-view-all"><a href="/buscar">Ver mais produtos →</a></div>
         </section>
       </PremiumReveal>
 

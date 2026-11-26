@@ -92,3 +92,5 @@ export default async function ProdutoPage({ params }: Props) {
     </>
   );
 }
+
+export const dynamic = "force-dynamic";

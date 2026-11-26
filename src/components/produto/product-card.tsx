@@ -18,6 +18,8 @@ function formatarMoeda(valor: number) {
 
 export function ProductCard({ produto, prioridade = false }: ProductCardProps) {
   const reduzirMovimento = useReducedMotion();
+  const promo = produto.promocao;
+  const imagem = promo ? produto.imagemOferta : produto.imagemCapa;
 
   return (
     <motion.article
@@ -26,9 +28,9 @@ export function ProductCard({ produto, prioridade = false }: ProductCardProps) {
       transition={{ duration: 0.24, ease: "easeOut" }}
     >
       <Link href={`/produto/${produto.slug}`} className="editorial-product-media premium-product-media">
-        {produto.imagemCapa ? (
+        {imagem ? (
           <SmartImage
-            src={produto.imagemCapa}
+            src={imagem}
             alt={produto.nome}
             fill
             priority={prioridade}
@@ -44,7 +46,7 @@ export function ProductCard({ produto, prioridade = false }: ProductCardProps) {
           </div>
         )}
 
-        {produto.destaque ? <span className="editorial-product-label">Destaque</span> : null}
+        {promo ? <span className="editorial-product-label catalog-offer-label">{promo.campanhaNome || "Oferta"} · {Math.floor((1 - promo.precoPromocional / promo.precoOriginal) * 100)}% OFF</span> : produto.destaque ? <span className="editorial-product-label">Destaque</span> : null}
 
         <span className="premium-product-discover">
           Ver detalhes
@@ -57,10 +59,14 @@ export function ProductCard({ produto, prioridade = false }: ProductCardProps) {
           <span>{produto.categoriaNome ?? "Cristã Modesta"}</span>
           <Link href={`/produto/${produto.slug}`}>{produto.nome}</Link>
         </div>
-        <p>
+        {promo ? <div className="catalog-offer-price">
+          <small>Oferta: {[produto.corOferta, produto.tamanhoOferta].filter(Boolean).join(" / ")}</small>
+          <del>{formatarMoeda(promo.precoOriginal)}</del>
+          <strong>{formatarMoeda(promo.precoPromocional)}</strong>
+        </div> : <p>
           {produto.possuiPrecosDiferentes ? <small>A partir de </small> : null}
           {formatarMoeda(produto.precoMinimo)}
-        </p>
+        </p>}
       </div>
 
       {produto.cores.length > 0 ? (

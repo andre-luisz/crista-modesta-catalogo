@@ -40,13 +40,15 @@ export function ProductExperience({
 }: {
   produto: CatalogoProdutoDetalhe;
 }) {
+  const ofertaInicial = produto.cores.flatMap(cor => cor.tamanhos.filter(item => item.disponivel && item.promocao).map(item => ({ cor, item }))).sort((a,b) => a.item.promocao!.precoPromocional - b.item.promocao!.precoPromocional || a.item.variacaoId.localeCompare(b.item.variacaoId))[0];
   const corInicial =
+    ofertaInicial?.cor ??
     produto.cores.find((cor) => cor.principal) ??
     produto.cores[0] ??
     null;
 
   const [corId, setCorId] = useState(corInicial?.id ?? null);
-  const [tamanho, setTamanho] = useState<string | null>(null);
+  const [tamanho, setTamanho] = useState<string | null>(ofertaInicial?.item.tamanho ?? null);
   const [indiceImagem, setIndiceImagem] = useState(0);
   const [lightboxAberto, setLightboxAberto] = useState(false);
   const [corTrocando, setCorTrocando] = useState(false);
@@ -66,7 +68,7 @@ export function ProductExperience({
     const especificas = corAtual?.imagens ?? [];
     const combinadas =
       especificas.length > 0
-        ? [...especificas, ...produto.imagensGerais]
+        ? especificas
         : produto.imagensGerais;
 
     return combinadas.filter(
@@ -84,10 +86,11 @@ export function ProductExperience({
     (item) => item.tamanho === tamanho,
   );
 
+  const promo = tamanhoSelecionado?.promocao ?? null;
   const preco =
-    tamanhoSelecionado?.preco ||
+    promo?.precoPromocional ?? (tamanhoSelecionado?.preco ||
     corAtual?.precoMinimo ||
-    produto.precoMinimo;
+    produto.precoMinimo);
 
   const selecionarImagem = useCallback(
     (indice: number) => {
@@ -124,7 +127,8 @@ export function ProductExperience({
     setCorTrocando(true);
     setIndiceImagem(0);
     setCorId(id);
-    setTamanho(null);
+    const ofertas = produto.cores.find(c => c.id === id)?.tamanhos.filter(t => t.disponivel && t.promocao).sort((a,b) => a.promocao!.precoPromocional - b.promocao!.precoPromocional);
+    setTamanho(ofertas?.[0]?.tamanho ?? null);
 
     window.setTimeout(
       () => setCorTrocando(false),
@@ -152,7 +156,8 @@ export function ProductExperience({
     produto.codigo ? `Código: ${produto.codigo}.` : null,
     corAtual ? `Cor: ${corAtual.nome}.` : null,
     tamanho ? `Tamanho: ${tamanho}.` : null,
-    `Valor: ${moeda(preco)}.`,
+    tamanhoSelecionado ? `Valor ${promo ? "promocional" : ""}: ${moeda(preco)}.${promo?.campanhaNome ? ` Campanha: ${promo.campanhaNome}.` : ""}` : "Gostaria de confirmar o tamanho e o valor.",
+    promo ? `Preço original: ${moeda(promo.precoOriginal)}. Economia: ${moeda(promo.precoOriginal - promo.precoPromocional)}.` : null,
     "Vi a peça no catálogo da Cristã Modesta.",
   ]
     .filter(Boolean)
@@ -203,36 +208,23 @@ export function ProductExperience({
       >
         {imagens.length > 0 ? (
           <>
-            <div className="zara-desktop-gallery">
-              {imagens.map((imagem, indice) => (
-                <button
-                  type="button"
-                  className="zara-desktop-image"
-                  key={imagem.id}
-                  onClick={() => abrirLightbox(indice)}
-                  aria-label={`Ampliar imagem ${indice + 1} de ${produto.nome}`}
-                >
-                  <SmartImage
-                    src={imagem.url}
-                    alt={`${produto.nome} - imagem ${indice + 1}`}
-                    fill
-                    priority={indice < 2}
-                    quality={92}
-                    sizes="(max-width: 1100px) 100vw, 38vw"
-                    containerClassName="zara-desktop-image-smart"
-                    imageClassName="zara-desktop-image-element"
-                  />
-
-                  <span className="zara-image-number">
-                    {String(indice + 1).padStart(2, "0")}
-                  </span>
-
-                  <span className="zara-image-expand">
-                    <Expand size={16} aria-hidden="true" />
-                    Ampliar
-                  </span>
+            <div className="zara-desktop-gallery cm-gallery">
+              <div className="cm-gallery-stage">
+                <button type="button" className="cm-main-image" onClick={() => abrirLightbox(indiceImagem)} aria-label="Ampliar foto selecionada">
+                  <SmartImage src={(imagens[indiceImagem] ?? imagens[0]).url} alt={`${produto.nome} - foto ${indiceImagem + 1}`} fill priority quality={90} sizes="(min-width: 1100px) 50vw, 90vw" containerClassName="zara-desktop-image-smart" imageClassName="zara-desktop-image-element" />
+                  <span className="cm-expand"><Expand size={17} /> Ampliar</span>
                 </button>
-              ))}
+                {imagens.length > 1 && <>
+                  <button type="button" className="cm-gallery-prev" disabled={indiceImagem === 0} onClick={() => selecionarImagem(Math.max(0, indiceImagem - 1))} aria-label="Foto anterior"><ChevronLeft /></button>
+                  <button type="button" className="cm-gallery-next" disabled={indiceImagem >= imagens.length - 1} onClick={() => selecionarImagem(Math.min(imagens.length - 1, indiceImagem + 1))} aria-label="Próxima foto"><ChevronRight /></button>
+                </>}
+                <span className="cm-gallery-count">{indiceImagem + 1} / {imagens.length}</span>
+              </div>
+              {imagens.length > 1 && <div className="cm-thumbnails" aria-label="Miniaturas">
+                {imagens.map((imagem, indice) => <button type="button" key={imagem.id} aria-pressed={indice === indiceImagem} aria-label={`Selecionar foto ${indice + 1}`} onClick={() => selecionarImagem(indice)}>
+                  <SmartImage src={imagem.url} alt="" fill quality={75} sizes="84px" containerClassName="zara-desktop-image-smart" imageClassName="zara-desktop-image-element" />
+                </button>)}
+              </div>}
             </div>
 
             <div className="zara-mobile-gallery">
@@ -371,13 +363,17 @@ export function ProductExperience({
 
           <h1>{produto.nome}</h1>
 
+          {promo && <p className="catalog-sale-value cm-campaign">{promo.campanhaNome || "Oferta"} · {Math.floor((1 - promo.precoPromocional / promo.precoOriginal) * 100)}% OFF</p>}
           <div className="zara-product-price">
             {produto.possuiPrecosDiferentes &&
             !tamanhoSelecionado ? (
               <small>A partir de</small>
             ) : null}
-            <strong>{moeda(preco)}</strong>
+            {promo && <del className="catalog-old-price">{moeda(promo.precoOriginal)}</del>}
+            <strong className={promo ? "catalog-sale-value" : undefined}>{moeda(preco)}</strong>
           </div>
+
+          {promo && <p className="cm-savings">Economize {moeda(promo.precoOriginal - promo.precoPromocional)}</p>}
 
           {produto.codigo ? (
             <p className="zara-product-code">
@@ -451,6 +447,7 @@ export function ProductExperience({
                     aria-pressed={item.tamanho === tamanho}
                   >
                     {item.tamanho}
+                    {item.promocao && <small className="catalog-size-offer">{moeda(item.promocao.precoPromocional)}</small>}
                     {item.tamanho === tamanho ? (
                       <Check size={13} aria-hidden="true" />
                     ) : null}
@@ -532,7 +529,8 @@ export function ProductExperience({
               ? "A partir de"
               : "Valor"}
           </small>
-          <strong>{moeda(preco)}</strong>
+          {promo && <del className="catalog-old-price">{moeda(promo.precoOriginal)}</del>}
+          <strong className={promo ? "catalog-sale-value" : undefined}>{moeda(preco)}</strong>
         </div>
 
         <a

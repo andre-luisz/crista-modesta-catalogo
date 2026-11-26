@@ -9,11 +9,10 @@ type CategoryShowcaseProps = {
 };
 
 export function CategoryShowcase({ categorias, produtos }: CategoryShowcaseProps) {
-  const itens = categorias.slice(0, 3).map((categoria, indice) => ({
+  const itens = categorias.slice(0, 3).map((categoria) => ({
     categoria,
     produto:
-      produtos.find((item) => item.categoriaId === categoria.id && item.imagemCapa) ??
-      produtos.filter((item) => item.imagemCapa)[indice],
+      produtos.find((item) => item.categoriaId === categoria.id && item.imagemCapa),
   }));
 
   if (itens.length === 0) return null;

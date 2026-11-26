@@ -1,3 +1,5 @@
+export type CatalogoPromocao = { campanhaNome: string | null; precoOriginal: number; precoPromocional: number };
+
 export type CatalogoCorResumo = {
   id: string;
   nome: string;
@@ -16,7 +18,11 @@ export type CatalogoProduto = {
   precoMinimo: number;
   precoMaximo: number;
   possuiPrecosDiferentes: boolean;
+  promocao: CatalogoPromocao | null;
   imagemCapa: string | null;
+  imagemOferta: string | null;
+  corOferta: string | null;
+  tamanhoOferta: string | null;
   destaque: boolean;
   cores: CatalogoCorResumo[];
 };
@@ -33,6 +39,7 @@ export type CatalogoTamanho = {
   variacaoId: string;
   tamanho: string;
   preco: number;
+  promocao: CatalogoPromocao | null;
   disponivel: boolean;
 };
 
